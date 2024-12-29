@@ -1,0 +1,55 @@
+{{- if .Values.networkPolicy.enabled }}
+---
+apiVersion: {{ include "dillinger.networkPolicy.apiVersion" . }}
+kind: NetworkPolicy
+metadata:
+  name: {{ include "dillinger.fullname" . }}
+  namespace: {{ include "dillinger.namespace" . }}
+  labels:
+    {{- include "dillinger.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "dillinger.fullname" . }}
+    {{- if .Values.commonLabels }}
+    {{- tpl (toYaml .Values.commonLabels) . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.commonAnnotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  podSelector:
+    matchLabels: {{- include "dillinger.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+        - port: {{ .Values.service.port }}
+      {{- if and (not .Values.networkPolicy.allowExternal) .Values.networkPolicy.ingressNSMatchLabels }}
+      from:
+        {{- if .Values.networkPolicy.ingressNSMatchLabels }}
+        - namespaceSelector:
+            matchLabels:
+              {{- range $key, $value := .Values.networkPolicy.ingressNSMatchLabels }}
+              {{ $key | quote }}: {{ $value | quote }}
+              {{- end }}
+          {{- if .Values.networkPolicy.ingressNSPodMatchLabels }}
+          podSelector:
+            matchLabels:
+              {{- range $key, $value := .Values.networkPolicy.ingressNSPodMatchLabels }}
+              {{ $key | quote }}: {{ $value | quote }}
+              {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- with .Values.networkPolicy.extraIngress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- if .Values.networkPolicy.allowExternalEgress }}
+  egress:
+    - {}
+  {{- else if .Values.networkPolicy.extraEgress }}
+  egress:
+    {{ tpl (toYaml .Values.networkPolicy.extraEgress) . | nindent 4 }}
+  {{- else }}
+  egress: []
+  {{- end }}
+{{- end }}
