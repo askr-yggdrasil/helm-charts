@@ -3,6 +3,28 @@ entries:
   dillinger:
   - apiVersion: v2
     appVersion: 3.39.1
+    created: "2024-12-29T05:19:43.873780903Z"
+    description: Unofficial Helm chart for the Dillinger markdown editor.
+    digest: 2ee21e3c135e1a24657178ffd7ca221ec0ca98ae3e30408fb3d528522942390c
+    home: https://dillinger.io/
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/dillinger.png
+    keywords:
+    - dillinger
+    - editor
+    - markdown
+    maintainers:
+    - email: artifacthub@yggdrasil.io
+      name: yggdrasil
+    name: dillinger
+    sources:
+    - https://github.com/joemccann/dillinger
+    - https://docs.linuxserver.io/images/docker-dillinger/
+    type: application
+    urls:
+    - dillinger-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
+    appVersion: 3.39.1
     created: "2024-12-29T05:04:48.57607184Z"
     description: Unofficial Helm chart for the Dillinger markdown editor
     digest: 420a1e970586ae0853c0e6976988fb5b0c66181edc6fa0b0b61c55735473b379
@@ -23,4 +45,4 @@ entries:
     urls:
     - dillinger-0.1.5.tgz
     version: 0.1.5
-generated: "2024-12-29T05:04:48.576082621Z"
+generated: "2024-12-29T05:19:43.873789258Z"
