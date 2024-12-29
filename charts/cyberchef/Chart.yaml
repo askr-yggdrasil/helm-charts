@@ -1,0 +1,18 @@
+---
+apiVersion: v2
+type: application
+name: cyberchef
+description: Unofficial Helm chart for CyberChef.
+icon: "https://raw.githubusercontent.com/gchq/CyberChef/master/src/web/static/images/cyberchef-512x512.png"
+version: 1.0.0
+appVersion: 10.19.4
+keywords:
+  - application
+  - cyberchef
+  - utility
+home: https://gchq.github.io/CyberChef/
+sources:
+  - https://github.com/gchq/CyberChef
+maintainers:
+  - name: yggdrasil
+    email: artifacthub@yggdrasil.io
