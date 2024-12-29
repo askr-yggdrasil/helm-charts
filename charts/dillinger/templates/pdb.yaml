@@ -1,0 +1,26 @@
+{{- if .Values.pdb.create }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "dillinger.fullname" . }}
+  namespace: {{ include "dillinger.namespace" . }}
+  labels:
+    {{- include "dillinger.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "dillinger.fullname" . }}
+    {{- if .Values.commonLabels }}
+    {{- tpl (toYaml .Values.commonLabels) . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.commonAnnotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels: {{- include "dillinger.selectorLabels" . | nindent 6 }}
+  {{- with .Values.pdb.minAvailable }}
+  minAvailable: {{ . }}
+  {{- end }}
+  {{- if or .Values.pdb.maxUnavailable (not .Values.pdb.minAvailable) }}
+  maxUnavailable: {{ .Values.pdb.maxUnavailable | default 1 }}
+  {{- end }}
+{{- end }}
