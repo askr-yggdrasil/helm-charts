@@ -1,0 +1,90 @@
+---
+# --------------------------------------------------------------------------- #
+# General                                                                     #
+# --------------------------------------------------------------------------- #
+
+name: Lint and test charts
+
+on:
+  push:
+    branches: ["**"]
+
+# --------------------------------------------------------------------------- #
+# Job Configuration                                                           #
+# --------------------------------------------------------------------------- #
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
+        with:
+          # Need full history so `chart-testing` can compare branches properly
+          fetch-depth: 0
+
+      - name: Detect changes in charts
+        id: chart-files
+        uses: dorny/paths-filter@v3 # https://github.com/dorny/paths-filter
+        with:
+          filters: |
+            charts:
+              - 'charts/**'
+
+      - name: Install Helm
+        if: ${{ github.ref == 'refs/heads/master' || steps.chart-files.outputs.charts == 'true' }}
+        uses: azure/setup-helm@v4 # https://github.com/azure/setup-helm
+
+      - name: Install Python
+        if: ${{ github.ref == 'refs/heads/master' || steps.chart-files.outputs.charts == 'true' }}
+        uses: actions/setup-python@v5 # https://github.com/actions/setup-python
+        with:
+          python-version: '3.x'
+          check-latest: true
+
+      - name: Install chart-testing
+        if: ${{ github.ref == 'refs/heads/master' || steps.chart-files.outputs.charts == 'true' }}
+        uses: helm/chart-testing-action@v2.6.1 # https://github.com/helm/chart-testing-action
+
+      - name: List changed charts
+        id: list-changed
+        if: ${{ github.ref != 'refs/heads/master' && steps.chart-files.outputs.charts == 'true' }}
+        run: |
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # --- Lint Charts ----------------------------------------------------- #
+
+      - name: Lint
+        if: ${{ github.ref == 'refs/heads/master' || steps.list-changed.outputs.changed == 'true' }}
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            echo "Running ct lint on all charts..."
+            ct lint --all
+          else
+            echo "Running ct lint on changed charts..."
+            ct lint --target-branch ${{ github.event.repository.default_branch }}
+          fi
+
+      # --- Install and Test Charts ----------------------------------------- #
+
+      - name: Create kind cluster
+        if: ${{ github.ref == 'refs/heads/master' || steps.list-changed.outputs.changed == 'true' }}
+        uses: helm/kind-action@v1 # https://github.com/helm/kind-action
+
+      - name: Install charts to kind cluster
+        if: ${{ github.ref == 'refs/heads/master' || steps.list-changed.outputs.changed == 'true' }}
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            echo "Installing all charts..."
+            ct install --all
+          else
+            echo "Installing changed charts..."
+            ct install --target-branch ${{ github.event.repository.default_branch }}
+          fi
+
+# --------------------------------------------------------------------------- #

@@ -1,0 +1,39 @@
+---
+# --------------------------------------------------------------------------- #
+# General                                                                     #
+# --------------------------------------------------------------------------- #
+
+name: Run pre-commit hooks
+
+on:
+  push:
+    branches-ignore: ["master"]
+
+# --------------------------------------------------------------------------- #
+# Job Configuration                                                           #
+# --------------------------------------------------------------------------- #
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4 # https://github.com/azure/setup-helm
+        with:
+          version: v3.14.4
+
+      - name: Install helm-docs
+        uses: gabe565/setup-helm-docs-action@v1 # https://github.com/gabe565/setup-helm-docs-action
+
+      - name: Install Python
+        uses: actions/setup-python@v5  # https://github.com/actions/setup-python
+        with:
+          python-version: 3.x
+
+      - name: Run pre-commit hooks
+        uses: pre-commit/action@v3.0.1 # https://github.com/pre-commit/action
+
+# --------------------------------------------------------------------------- #
