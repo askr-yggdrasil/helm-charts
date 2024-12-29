@@ -1,5 +1,27 @@
 apiVersion: v1
 entries:
+  cyberchef:
+  - apiVersion: v2
+    appVersion: 10.19.4
+    created: "2024-12-29T05:25:45.129740778Z"
+    description: Unofficial Helm chart for CyberChef.
+    digest: 95f174f63dbc6eab81318baa2b242c23aefc5bcc085d725ce042ff45ac30cd34
+    home: https://gchq.github.io/CyberChef/
+    icon: https://raw.githubusercontent.com/gchq/CyberChef/master/src/web/static/images/cyberchef-512x512.png
+    keywords:
+    - application
+    - cyberchef
+    - utility
+    maintainers:
+    - email: artifacthub@yggdrasil.io
+      name: yggdrasil
+    name: cyberchef
+    sources:
+    - https://github.com/gchq/CyberChef
+    type: application
+    urls:
+    - cyberchef-1.0.0.tgz
+    version: 1.0.0
   dillinger:
   - apiVersion: v2
     appVersion: 3.39.1
@@ -45,4 +67,4 @@ entries:
     urls:
     - dillinger-0.1.5.tgz
     version: 0.1.5
-generated: "2024-12-29T05:19:43.873789258Z"
+generated: "2024-12-29T05:25:45.129748943Z"
