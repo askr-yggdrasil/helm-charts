@@ -2,9 +2,9 @@
 apiVersion: v2
 type: application
 name: dillinger
-description: Unofficial Helm chart for the Dillinger markdown editor
+description: Unofficial Helm chart for the Dillinger markdown editor.
 icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/dillinger.png
-version: 0.1.5
+version: 1.0.0
 appVersion: 3.39.1
 keywords:
   - dillinger
